@@ -21,28 +21,19 @@ X = home_data[features]
 # Split into validation and training data
 train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
 
-# Specify Model
-iowa_model = DecisionTreeRegressor(random_state=1)
-# Fit Model
-iowa_model.fit(train_X, train_y)
+# RandomForest
+from sklearn.ensemble import RandomForestRegressor
 
-# Make validation predictions and calculate mean absolute error
-val_predictions = iowa_model.predict(val_X)
-val_mae = mean_absolute_error(val_predictions, val_y)
-print("Validation MAE when not specifying max_leaf_nodes: {:,.0f}".format(val_mae))
+# Define the model. Set random_state to 1
+rf_model = RandomForestRegressor(random_state=1)
 
-# Check what leaf size works best using a for loop
-candidate_max_leaf_nodes = [5, 25, 50, 100, 250, 500]
-# Write loop to find the ideal tree size from candidate_max_leaf_nodes
-scores={max_leaf: get_mae(max_leaf,train_X, val_X, train_y, val_y) for max_leaf in candidate_max_leaf_nodes}
-print(scores)
-# Store the best value of max_leaf_nodes (it will be either 5, 25, 50, 100, 250 or 500)
-best_tree_size = min(scores,key=scores.get)
-print(best_tree_size)
+# fit your model
+rf_model.fit(train_X,train_y)
 
-# Using best value for max_leaf_nodes(which turns out to be 100 from the above loop)
-iowa_model = DecisionTreeRegressor(max_leaf_nodes=100, random_state=1)
-iowa_model.fit(train_X, train_y)
-val_predictions = iowa_model.predict(val_X)
-val_mae = mean_absolute_error(val_predictions, val_y)
-print("Validation MAE for best value of max_leaf_nodes: {:,.0f}".format(val_mae))
+# Calculate the mean absolute error of your Random Forest model on the validation data
+val_predictions = rf_model.predict(val_X)
+rf_val_mae = mean_absolute_error(val_predictions, val_y)
+
+print("Validation MAE for Random Forest Model: {}".format(rf_val_mae))
+
+# Above code runs RF on default parameteres i.e. parameters have not been tuned like max_leaf_nodes in DecisonTreeRegressor
